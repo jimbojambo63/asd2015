@@ -12,7 +12,7 @@ typedef elist *plist;
 //**************************STAMPE*******************
 
 void stampaNormale(plist temp){
-	printf("*******stampa normale*******\n");
+	printf("stampa normale: ");
 	if(temp==NULL)
 		printf("lista vuota\n");
 	else{
@@ -27,7 +27,7 @@ void stampaNormale(plist temp){
 }
 
 void stampaReverse(plist temp){
-	printf("*******stampa reverse*******\n");
+	printf("stampa reverse: ");
 	if(temp==NULL)
 		printf("lista vuota\n");
 	else{	
@@ -58,9 +58,9 @@ int lunghezzaLista(plist temp){
 
 //**********************RICERCA************************
 //ritorna 0 se non trovato, altrimenti ritorna la posizione
-int cerca(plist *p, int val){
-	plist temp;
-	temp=*p;
+int cerca(plist temp, int val){
+	// plist temp;
+	// temp=*p;
 	int cont=1;
 	int pos=0;
 	while(temp){
@@ -79,9 +79,14 @@ void inserisciInTesta(plist *p, int n){
 	printf("inserisci il valore %d in testa\n",n);
     plist temp=(plist)malloc(sizeof(elist));
     temp->info=n;
+    temp->prev=NULL;
     if(*p == NULL) {
         *p = temp;
     }else{
+  //   	plist succ=temp->next;
+		// *p=succ;
+		// succ->prev=NULL;
+
     	temp->next=*p;
     	(*p)->prev=temp;
     	*p=temp;    	
@@ -137,6 +142,18 @@ void inserisciInPos(plist *p, int val, int pos){
 		}
 	}
 	
+}
+
+//********************CREA LISTA***********************
+plist creaLista(int dim){
+	plist lista=(plist)malloc(sizeof(elist));
+	lista=NULL;
+	int i;
+	for(i=0;i<dim;i++){
+		int n=rand()%9+1;
+		inserisciInCoda(&lista,n);
+	}
+	return lista;
 }
 
 //*******************CANCELLAZIONE*********************
@@ -243,6 +260,59 @@ void cancellaVal(plist *p, int val){
 	}	
 }
 
+//*******************INTERSEZIONE**********************
+void intersezione(plist lista1, plist lista2){
+	plist lista=(plist)malloc(sizeof(elist));
+	plist list1=lista1;
+	lista=NULL;
+	while(lista1){
+		plist lis2=lista2;		
+		while(lis2){
+			// printf("confronto %d e %d\n",lista1->info,lis2->info);
+			if(lista1->info==lis2->info){
+				int pos=cerca(lista,lista1->info);
+				if(pos==0)
+					inserisciInCoda(&lista,lista1->info);
+			}
+			lis2=lis2->next;
+		}
+		lista1=lista1->next;
+	}
+	printf("*************************************\nl'intersezione tra la lista\n");
+	stampaNormale(list1);
+	printf("e la lista\n");
+	stampaNormale(lista2);
+	printf("è uguale a\n");
+	stampaNormale(lista);
+}
+
+//**********************UNIONE*************************
+void unione(plist lista1, plist lista2){
+	plist lista=(plist)malloc(sizeof(elist));
+	plist list1=lista1;
+	lista=NULL;
+	while(lista1){
+		plist lis2=lista2;		
+		while(lis2){
+			//printf("confronto %d e %d\n",lista1->info,lis2->info);	
+			int pos=cerca(lista,lis2->info);
+			if(pos==0)
+				inserisciInCoda(&lista,lis2->info);
+			lis2=lis2->next;
+		}
+		int pos=cerca(lista,lista1->info);
+			if(pos==0)
+				inserisciInCoda(&lista,lista1->info);
+		lista1=lista1->next;
+	}
+	printf("*************************************\nl'unione tra la lista\n");
+	stampaNormale(list1);
+	printf("e la lista\n");
+	stampaNormale(lista2);
+	printf("è uguale a\n");
+	stampaNormale(lista);
+}
+
 //*************************MAIN************************
 int main(){
 
@@ -260,7 +330,7 @@ int main(){
 	//********RICERCA********
 	int pos;
 	int val=6;
-	pos=cerca(&lista,val);
+	pos=cerca(lista,val);
 	if(pos==0)
 		printf("valore %d non trovato\n",val);
 	else
@@ -278,8 +348,8 @@ int main(){
 	printf("*************************************\n");
 	plist l1=NULL;
 	inserisciInCoda(&l1,5);
-	//inserisciInTesta(&l1,7);
-	//inserisciInTesta(&l1,3);
+	inserisciInTesta(&l1,7);
+	inserisciInTesta(&l1,3);
 	stampaNormale(l1);
 	//stampaReverse(l1);
 	cancellaInCoda(&l1);
@@ -307,5 +377,24 @@ int main(){
 	cancellaVal(&l2,5);
 	stampaNormale(l2);
 	stampaReverse(l2);
+	free(l1);
+	free(l2);
+
+	//**********INTERSEZIONE ED UNIONE*********
+	printf("************INTERSEZIONE*************\n");
+	printf("*************************************\n");
+	plist lis1=(plist)malloc(sizeof(elist));
+	plist lis2=(plist)malloc(sizeof(elist));
+	srand(time(NULL));
+	printf("Lista 1\n");
+	lis1=creaLista(4);
+	stampaNormale(lis1);
+	printf("Lista 2\n");
+	lis2=creaLista(6);
+	stampaNormale(lis2);
+	intersezione(lis1,lis2);
+	printf("***************UNIONE****************\n");
+	printf("*************************************\n");
+	unione(lis1,lis2);
 	return 0;
 }
