@@ -24,12 +24,9 @@ int pow2(int base, int esp){
 
 
 int conta_nodi_lvl(albero T, int lvl){
-	if(lvl==0){
-		if(T!=NULL)
-			return 1;
-		else return 0;
-	}
-	return conta_nodi_lvl(T->dx,lvl-1)+conta_nodi_lvl(T->sx,lvl-1);
+	if(lvl==0 && T) return 1;
+	if(T) return conta_nodi_lvl(T->dx,lvl-1)+conta_nodi_lvl(T->sx,lvl-1);
+	return 0;
 }
 
 int altezza(albero T,int lvl){
